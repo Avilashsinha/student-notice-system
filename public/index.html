@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Student registration and official notice board system">
+  <title>Student Notice System - Register & View Notices</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- Particle Background -->
+  <div class="particles" id="particles"></div>
+
+  <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-badge">🎓</div>
+      <h1 class="hero-title">Student Notice System</h1>
+      <p class="hero-subtitle">Stay connected with official announcements and never miss important updates</p>
+      <div class="hero-cta">
+        <a href="#registration" class="btn btn-hero">Get Started →</a>
+        <a href="#notices" class="btn btn-outline">View Notices</a>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+      <div class="feature-card">
+        <div class="feature-icon">📧</div>
+        <h3 class="feature-title">Email Notifications</h3>
+        <p class="feature-description">Receive instant email alerts for all new official notices</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3 class="feature-title">Notice Board</h3>
+        <p class="feature-description">Access all notices anytime from a centralized dashboard</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <h3 class="feature-title">Real-time Updates</h3>
+        <p class="feature-description">Get notified immediately when new announcements are posted</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3 class="feature-title">Secure & Reliable</h3>
+        <p class="feature-description">Your information is protected with industry-standard security</p>
+      </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <div class="main-grid">
+      <!-- Registration Section -->
+      <section class="registration-section" id="registration">
+        <div class="glass-card">
+          <h2 class="section-title">
+            <span class="section-icon">✨</span>
+            Student Registration
+          </h2>
+
+          <div id="alertContainer"></div>
+
+          <form id="registrationForm">
+            <div class="form-group">
+              <label for="studentName">Full Name</label>
+              <div class="input-wrapper">
+                <span class="input-icon">👤</span>
+                <input type="text" id="studentName" name="name" class="form-input" placeholder="Enter your full name"
+                  required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="phoneNumber">Phone Number</label>
+              <div class="input-wrapper">
+                <span class="input-icon">📱</span>
+                <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input"
+                  placeholder="Enter your phone number" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <div class="input-wrapper">
+                <span class="input-icon">✉️</span>
+                <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email address"
+                  required>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="submitBtn">
+              <span id="btnText">Register Now</span>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Notice Board Section -->
+      <section class="notice-board" id="notices">
+        <div class="glass-card">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span class="section-icon">📢</span>
+              Official Notice Board
+            </h2>
+            <div class="notice-badge" id="noticeBadge">0 Notices</div>
+          </div>
+
+          <div id="noticeContainer">
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <p>Loading notices...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+      <div class="stats-card">
+        <div class="stats-icon">👥</div>
+        <div class="stats-number" id="totalStudents">0</div>
+        <div class="stats-label">Registered Students</div>
+      </div>
+
+      <div class="stats-card">
+        <div class="stats-icon">📋</div>
+        <div class="stats-number" id="totalNotices">0</div>
+        <div class="stats-label">Total Notices</div>
+      </div>
+
+      <div class="stats-card">
+        <div class="stats-icon">⚡</div>
+        <div class="stats-number">24/7</div>
+        <div class="stats-label">Always Available</div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3 class="footer-title">📚 Student Notice System</h3>
+          <p class="footer-text">Keeping students informed and connected with official announcements.</p>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#registration">Register</a></li>
+            <li><a href="#notices">View Notices</a></li>
+            <li><a href="/admin.html">Admin Panel</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Student Notice System. All rights reserved.</p>
+        <p class="developer-credit">Made with ❤️ by <strong>Avilash Sinha Roy</strong></p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

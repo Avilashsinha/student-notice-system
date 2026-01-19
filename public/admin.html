@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin panel for managing student notices">
+    <title>Admin Panel - Student Notice System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>⚙️ Admin Panel</h1>
+            <p>Manage notices and view registered students</p>
+        </header>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="grid grid-2">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalStudents">0</div>
+                    <div class="stats-label">Registered Students</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-number" id="totalNotices">0</div>
+                    <div class="stats-label">Total Notices</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Post Notice Section -->
+        <section class="post-notice-section" style="margin-top: 2rem;">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <span>📝</span>
+                    Post New Notice
+                </h2>
+
+                <div id="alertContainer"></div>
+
+                <form id="noticeForm">
+                    <div class="form-group">
+                        <label for="noticeTitle">Notice Title</label>
+                        <input type="text" id="noticeTitle" name="title" class="form-input"
+                            placeholder="Enter notice title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="noticeContent">Notice Content</label>
+                        <textarea id="noticeContent" name="content" class="form-input"
+                            placeholder="Enter notice content" rows="6" required
+                            style="resize: vertical; min-height: 120px;"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span id="btnText">Post Notice & Send Emails</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Manage Notices Section -->
+        <section class="notice-board" style="margin-top: 2rem;">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <span>📋</span>
+                    Manage Notices
+                </h2>
+
+                <div id="noticeContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>Loading notices...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registered Students Section -->
+        <section class="students-section" style="margin-top: 2rem;">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <span>👥</span>
+                    Registered Students
+                </h2>
+
+                <div id="studentsContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👤</div>
+                        <p>Loading students...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Student Notice System. All rights reserved.</p>
+                <p class="developer-credit">Made with ❤️ by <strong>Avilash Sinha Roy</strong></p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>
