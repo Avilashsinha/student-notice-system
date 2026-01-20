@@ -3,6 +3,62 @@ const API_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:3000/api'
     : '/api';
 
+// Check authentication on page load
+async function checkAuth() {
+    try {
+        const response = await fetch(`${API_URL}/admin/check`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (!data.authenticated) {
+            // Redirect to login page
+            window.location.href = '/login.html';
+            return false;
+        }
+
+        // Update username display if available
+        if (data.user && data.user.username) {
+            const usernameEl = document.getElementById('adminUsername');
+            if (usernameEl) {
+                usernameEl.textContent = `👤 ${data.user.username}`;
+            }
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Auth check failed:', error);
+        window.location.href = '/login.html';
+        return false;
+    }
+}
+
+// Logout function
+async function logout() {
+    if (!confirm('Are you sure you want to logout?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/admin/logout`, {
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            window.location.href = '/login.html';
+        }
+    } catch (error) {
+        console.error('Logout failed:', error);
+        alert('Logout failed. Please try again.');
+    }
+}
+
+// Make logout available globally
+window.logout = logout;
+
 // DOM Elements
 const noticeForm = document.getElementById('noticeForm');
 const alertContainer = document.getElementById('alertContainer');
@@ -12,6 +68,13 @@ const submitBtn = document.getElementById('submitBtn');
 const btnText = document.getElementById('btnText');
 const totalStudentsEl = document.getElementById('totalStudents');
 const totalNoticesEl = document.getElementById('totalNotices');
+
+// Student Registration Form Elements
+const studentRegistrationForm = document.getElementById('studentRegistrationForm');
+const regAlertContainer = document.getElementById('regAlertContainer');
+const regSubmitBtn = document.getElementById('regSubmitBtn');
+const regBtnText = document.getElementById('regBtnText');
+
 
 // Show alert message
 function showAlert(message, type = 'success') {
@@ -28,6 +91,23 @@ function showAlert(message, type = 'success') {
         setTimeout(() => alert.remove(), 500);
     }, 5000);
 }
+
+// Show registration alert message
+function showRegAlert(message, type = 'success') {
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.textContent = message;
+
+    regAlertContainer.innerHTML = '';
+    regAlertContainer.appendChild(alert);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        alert.style.animation = 'fadeInUp 0.5s ease reverse';
+        setTimeout(() => alert.remove(), 500);
+    }, 5000);
+}
+
 
 // Format date
 function formatDate(dateString) {
@@ -52,7 +132,7 @@ function escapeHtml(text) {
 // Load notices
 async function loadNotices() {
     try {
-        const response = await fetch(`${API_URL}/notices`);
+        const response = await fetch(`${API_URL}/notices`, { credentials: 'include' });
         const data = await response.json();
 
         if (data.success) {
@@ -106,7 +186,8 @@ async function deleteNotice(noticeId) {
 
     try {
         const response = await fetch(`${API_URL}/notices/${noticeId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include'
         });
 
         const result = await response.json();
@@ -126,7 +207,7 @@ async function deleteNotice(noticeId) {
 // Load students
 async function loadStudents() {
     try {
-        const response = await fetch(`${API_URL}/students`);
+        const response = await fetch(`${API_URL}/students`, { credentials: 'include' });
         const data = await response.json();
 
         if (data.success) {
@@ -175,7 +256,66 @@ function displayStudents(students) {
   `).join('');
 }
 
+// Handle student registration form submission
+studentRegistrationForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Get form data
+    const formData = new FormData(studentRegistrationForm);
+    const data = {
+        name: formData.get('name').trim(),
+        phoneNumber: formData.get('phoneNumber').trim(),
+        email: formData.get('email').trim()
+    };
+
+    // Validate
+    if (!data.name || !data.phoneNumber || !data.email) {
+        showRegAlert('Please fill in all fields', 'error');
+        return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+        showRegAlert('Please enter a valid email address', 'error');
+        return;
+    }
+
+    // Disable button and show loading
+    regSubmitBtn.disabled = true;
+    regBtnText.innerHTML = '<span class="spinner"></span> Registering...';
+
+    try {
+        const response = await fetch(`${API_URL}/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+            credentials: 'include'
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showRegAlert('✅ Student registered successfully! Welcome email sent.', 'success');
+            studentRegistrationForm.reset();
+            loadStudents(); // Refresh the students list
+        } else {
+            showRegAlert(result.message || 'Failed to register student', 'error');
+        }
+    } catch (error) {
+        console.error('Error registering student:', error);
+        showRegAlert('Network error. Please try again.', 'error');
+    } finally {
+        // Re-enable button
+        regSubmitBtn.disabled = false;
+        regBtnText.textContent = 'Register Student';
+    }
+});
+
 // Handle notice form submission
+
 noticeForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -202,7 +342,8 @@ noticeForm.addEventListener('submit', async (e) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            credentials: 'include'
         });
 
         const result = await response.json();
@@ -238,16 +379,22 @@ noticeForm.addEventListener('submit', async (e) => {
 });
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    loadNotices();
-    loadStudents();
+document.addEventListener('DOMContentLoaded', async () => {
+    // Check authentication first
+    const isAuthenticated = await checkAuth();
 
-    // Auto-refresh every 30 seconds
-    setInterval(() => {
+    if (isAuthenticated) {
         loadNotices();
         loadStudents();
-    }, 30000);
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            loadNotices();
+            loadStudents();
+        }, 30000);
+    }
 });
+
 
 // Delete student
 async function deleteStudent(studentId) {
@@ -257,7 +404,8 @@ async function deleteStudent(studentId) {
 
     try {
         const response = await fetch(`${API_URL}/students/${studentId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include'
         });
 
         const result = await response.json();
@@ -274,6 +422,147 @@ async function deleteStudent(studentId) {
     }
 }
 
-// Make functions available globally
+// CSV Upload Functionality
+
+const uploadAlertContainer = document.getElementById('uploadAlertContainer');
+
+function showUploadAlert(message, type = 'success') {
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.textContent = message;
+
+    uploadAlertContainer.innerHTML = '';
+    uploadAlertContainer.appendChild(alert);
+
+    setTimeout(() => {
+        alert.style.animation = 'fadeInUp 0.5s ease reverse';
+        setTimeout(() => alert.remove(), 500);
+    }, 5000);
+}
+
+// Parse CSV file
+function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    const students = [];
+
+    for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+
+        const values = lines[i].split(',').map(v => v.trim());
+        const student = {};
+
+        headers.forEach((header, index) => {
+            student[header] = values[index];
+        });
+
+        students.push(student);
+    }
+
+    return students;
+}
+
+// Upload CSV
+async function uploadCSV() {
+    const fileInput = document.getElementById('csvFileInput');
+    const uploadBtn = document.getElementById('uploadCsvBtn');
+    const uploadBtnText = document.getElementById('uploadBtnText');
+
+    if (!fileInput.files || fileInput.files.length === 0) {
+        showUploadAlert('Please select a CSV file', 'error');
+        return;
+    }
+
+    const file = fileInput.files[0];
+
+    if (!file.name.endsWith('.csv')) {
+        showUploadAlert('Please upload a CSV file', 'error');
+        return;
+    }
+
+    uploadBtn.disabled = true;
+    uploadBtnText.innerHTML = '<span class="spinner"></span> Processing...';
+
+    try {
+        const text = await file.text();
+        const students = parseCSV(text);
+
+        if (students.length === 0) {
+            showUploadAlert('No valid student records found in CSV', 'error');
+            uploadBtn.disabled = false;
+            uploadBtnText.textContent = '📤 Upload CSV';
+            return;
+        }
+
+        // Validate CSV headers
+        const requiredFields = ['name', 'phoneNumber', 'email'];
+        const firstStudent = students[0];
+        const missingFields = requiredFields.filter(field => !firstStudent.hasOwnProperty(field));
+
+        if (missingFields.length > 0) {
+            showUploadAlert(`CSV is missing required columns: ${missingFields.join(', ')}`, 'error');
+            uploadBtn.disabled = false;
+            uploadBtnText.textContent = '📤 Upload CSV';
+            return;
+        }
+
+        // Register each student
+        let successCount = 0;
+        let failedCount = 0;
+        const errors = [];
+
+        for (const student of students) {
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(student),
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    successCount++;
+                } else {
+                    failedCount++;
+                    errors.push(`${student.name}: ${result.message}`);
+                }
+            } catch (error) {
+                failedCount++;
+                errors.push(`${student.name}: Network error`);
+            }
+        }
+
+        // Show results
+        let message = `✅ Successfully registered ${successCount} student(s).`;
+        if (failedCount > 0) {
+            message += ` ${failedCount} failed.`;
+            if (errors.length > 0 && errors.length <= 3) {
+                message += ` Errors: ${errors.join(', ')}`;
+            }
+        }
+
+        showUploadAlert(message, failedCount === 0 ? 'success' : 'warning');
+
+        // Clear file input
+        fileInput.value = '';
+
+        // Refresh students list
+        loadStudents();
+
+    } catch (error) {
+        console.error('Error uploading CSV:', error);
+        showUploadAlert('Failed to process CSV file', 'error');
+    } finally {
+        uploadBtn.disabled = false;
+        uploadBtnText.textContent = '📤 Upload CSV';
+    }
+}
+
+// Make all functions available globally
 window.deleteNotice = deleteNotice;
 window.deleteStudent = deleteStudent;
+window.uploadCSV = uploadCSV;

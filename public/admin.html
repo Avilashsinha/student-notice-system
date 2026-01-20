@@ -13,9 +13,21 @@
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1>⚙️ Admin Panel</h1>
-            <p>Manage notices and view registered students</p>
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1>⚙️ Admin Panel</h1>
+                    <p>Manage notices and view registered students</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span id="adminUsername" style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem;">👤 Admin</span>
+                    <button onclick="logout()" class="btn btn-danger" style="padding: 0.5rem 1rem;">
+                        🚪 Logout
+                    </button>
+                </div>
+            </div>
         </header>
+
 
         <!-- Stats Section -->
         <section class="stats-section">
@@ -28,6 +40,66 @@
                     <div class="stats-number" id="totalNotices">0</div>
                     <div class="stats-label">Total Notices</div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Student Registration Section -->
+        <section class="student-registration-section" style="margin-top: 2rem;">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <span>👨‍🎓</span>
+                    Register New Student
+                </h2>
+
+                <div id="regAlertContainer"></div>
+
+                <form id="studentRegistrationForm">
+                    <div class="form-group">
+                        <label for="studentName">Student Name</label>
+                        <input type="text" id="studentName" name="name" class="form-input"
+                            placeholder="Enter student name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentPhone">Phone Number</label>
+                        <input type="tel" id="studentPhone" name="phoneNumber" class="form-input"
+                            placeholder="Enter phone number" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentEmail">Email Address</label>
+                        <input type="email" id="studentEmail" name="email" class="form-input"
+                            placeholder="Enter email address" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="regSubmitBtn">
+                        <span id="regBtnText">Register Student</span>
+                    </button>
+                </form>
+
+                <!-- CSV Upload Section -->
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                    <h3 class="section-title" style="font-size: 1.2rem; margin-bottom: 1rem;">
+                        <span>📄</span>
+                        Bulk Upload Students (CSV)
+                    </h3>
+                    <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 1rem; font-size: 0.9rem;">
+                        Upload a CSV file with columns: <strong>name</strong>, <strong>phoneNumber</strong>,
+                        <strong>email</strong>
+                    </p>
+
+                    <div id="uploadAlertContainer"></div>
+
+                    <div class="form-group">
+                        <input type="file" id="csvFileInput" accept=".csv" class="form-input"
+                            style="padding: 0.75rem; cursor: pointer;">
+                    </div>
+
+                    <button type="button" class="btn btn-primary" id="uploadCsvBtn" onclick="uploadCSV()">
+                        <span id="uploadBtnText">📤 Upload CSV</span>
+                    </button>
+                </div>
+
             </div>
         </section>
 
